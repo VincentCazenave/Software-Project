@@ -4,12 +4,14 @@ The group is composed by TSHIBUNZI Cippora Sagesse, COQUILLARD Vincent, TETU Rap
 
 Each of us had specific tasks for the project.
 
-TSHIBUNZI Cippora Sagesse:
+TSHIBUNZI Cippora Sagesse: Role: Tasks:
 
-COQUILLARD Vincent: His role was to implement the communication between the database and the software.
+COQUILLARD Vincent: Role: Communication between database and software. Tasks: .
 
-TETU Raphaël:He took care of the design of the software
+TETU Raphaël: Role: Design of the software. Tasks:
 
-SIBONI Elie:
+SIBONI Elie:Role: Tasks:
 
-CAZENAVE Vincent:
+CAZENAVE Vincent: Role: Interface implementation. Tasks:
+
+

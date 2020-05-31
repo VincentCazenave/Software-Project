@@ -4,7 +4,7 @@ The group is composed by TSHIBUNZI Cippora Sagesse, COQUILLARD Vincent, TETU Rap
 
 Each of us had specific tasks for the project.
 
-TSHIBUNZI Cippora Sagesse: Role: Tasks:
+TSHIBUNZI Cippora Sagesse: Role: UML implementation, Client SERVER  Tasks:
 
 COQUILLARD Vincent: Role: Communication between database and software. Tasks: .
 

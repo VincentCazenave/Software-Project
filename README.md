@@ -6,9 +6,9 @@ Each of us had specific tasks for the project.
 
 TSHIBUNZI Cippora Sagesse:
 
-COQUILLARD Vincent:
+COQUILLARD Vincent: His role was to implement the communication between the database and the software.
 
-TETU Raphaël:
+TETU Raphaël:He took care of the design of the software
 
 SIBONI Elie:
 

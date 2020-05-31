@@ -1,0 +1,233 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
+public class BlackJackGUI implements ActionListener{
+
+	private JFrame frame = new JFrame("BlackJackGUI");
+	private JPanel topPanel = new JPanel();
+	private JPanel centerPanel = new JPanel();
+	private static JPanel bankPanel = new JPanel();
+	private static JPanel playerPanel = new JPanel();
+	private static BlackJack bj = new BlackJack();
+	private static JButton anotherButton = new JButton("Another card");
+	private static JButton noMoreButton = new JButton("No more card");
+	private static JButton resetButton = new JButton("Reset");
+	static BlackJackGUI bjay = new BlackJackGUI();	
+	
+	private static void addToPanel(JPanel p , String token) throws FileNotFoundException {
+	
+			File file = new File("src/img/card_"+ token+".png");
+			if(!file.exists()) {
+					throw new FileNotFoundException("can't find " + file.getPath());
+			}	
+			ImageIcon icon = new ImageIcon(file.getPath());
+			JLabel label = new JLabel(icon);
+			p.setLayout(new FlowLayout(FlowLayout.LEFT));
+			label.setLayout(new FlowLayout());
+			p.add(label);	
+	}	
+		
+	private static void updatePlayerPanel() throws FileNotFoundException{
+		playerPanel.removeAll();
+		playerPanel.revalidate();
+		playerPanel.repaint();
+		
+		List<Card> list = bj.getPlayerCardList();
+		for (int i = 0 ; i<list.size() ; i++) {
+			Card card = list.get(i);
+			String str = card.getSuitName() + "_" + card.getValueSymbol();
+			addToPanel(playerPanel, str);
+		}
+	
+		JLabel label = new JLabel("Player Best : " + bj.getPlayerBest());
+		label.setLayout(new FlowLayout());
+		playerPanel.add(label);
+		
+		if(bj.getPlayerBest() == 21) {
+			addToPanel(playerPanel, "blackjack");
+		}
+		
+		if(bj.gameFinished == true && bj.isPlayerWinner() == true) {
+			addToPanel(playerPanel, "winner");
+		}
+		
+		if(bj.gameFinished == true && bj.isPlayerWinner() == false && bj.getBankBest() <= 21 && bj.getBankBest() != bj.getPlayerBest()) {
+			addToPanel(playerPanel, "looser");
+			
+		}
+		
+		if(bj.gameFinished == true && bj.getBankBest() == bj.getPlayerBest()) {
+			addToPanel(playerPanel, "draw");
+		}	
+		if(bj.getPlayerBest() > 21) {
+			anotherButton.setEnabled(false);
+			noMoreButton.setEnabled(false);
+			resetButton.setEnabled(true);
+			
+		}
+		
+		playerPanel.updateUI();
+		
+	}
+	
+	private static void updateBankPanel() throws FileNotFoundException{
+		bankPanel.removeAll();
+		bankPanel.revalidate();
+		bankPanel.repaint();
+
+		List<Card> list = bj.getBankCardList();
+		for (int i = 0 ; i<list.size() ; i++) {
+			Card card = list.get(i);
+			String str = card.getSuitName() + "_" + card.getValueSymbol();
+			addToPanel(bankPanel, str);
+		}
+		
+		JLabel label = new JLabel("Bank best : " + bj.getBankBest());
+		label.setLayout(new FlowLayout());
+		bankPanel.add(label);
+		
+		if(bj.gameFinished == true &&  bj.getBankBest() == 21) {
+			addToPanel(bankPanel, "blackjack");
+		}
+		
+		if(bj.gameFinished == true && bj.isBankWinner() == true) {
+			addToPanel(bankPanel, "winner");
+		}
+		
+		if(bj.gameFinished == true && bj.isBankWinner() == false && bj.getPlayerBest() <= 21 && bj.getBankBest() != bj.getPlayerBest() ) {
+			addToPanel(bankPanel, "looser");
+		}
+		
+		if(bj.gameFinished == true && bj.getBankBest() == bj.getPlayerBest()) {
+			addToPanel(bankPanel, "draw");
+		}
+	
+		bankPanel.updateUI();
+	}
+	
+	public void actionPerformed(ActionEvent e){
+		switch(e.getActionCommand()) {
+		case"key1":
+					try {
+							bj.playerDrawAnotherCard();
+					}catch (EmptyDeckException ex){
+						
+						JOptionPane.showMessageDialog(null, "The deck is empty", "Error", JOptionPane.ERROR_MESSAGE);
+						System.exit(-1);
+					}
+					try {
+					updatePlayerPanel();
+					updateBankPanel();
+					}catch (FileNotFoundException ex) {
+						System.out.println(ex.getMessage());
+					}
+					
+					if(bj.getPlayerBest() > 21) {
+						anotherButton.setEnabled(false);
+						noMoreButton.setEnabled(false);
+						resetButton.setEnabled(true);	
+					}
+					break;
+					
+		case"key2":
+					try {	
+						bj.bankLastTurn();
+					}catch (EmptyDeckException ex) {
+						
+						JOptionPane.showMessageDialog(null, "The deck is empty", "Error", JOptionPane.ERROR_MESSAGE);
+						System.exit(-1);
+					}
+					
+					try {
+						updateBankPanel();
+						updatePlayerPanel();
+						}catch (FileNotFoundException ex) {
+							System.out.println(ex.getMessage());
+						}
+						anotherButton.setEnabled(false);
+						noMoreButton.setEnabled(false);
+						break;
+		case"key3":
+					try{
+						bj.reset();
+					}catch (EmptyDeckException ex) {
+					
+						JOptionPane.showMessageDialog(null, "The deck is empty", "Error", JOptionPane.ERROR_MESSAGE);
+						System.exit(-1);
+					}
+					anotherButton.setEnabled(true);
+					noMoreButton.setEnabled(true);
+					resetButton.setEnabled(true);
+					try{
+						updateBankPanel();
+						updatePlayerPanel();
+					}catch (FileNotFoundException ex) {
+						System.out.println(ex.getMessage());
+					}
+						break;
+					
+		}
+	}
+	
+	public BlackJackGUI() {
+
+	frame.setMinimumSize(new Dimension(640,480));
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frame.setLayout(new BorderLayout());
+	frame.pack();
+	frame.setVisible(true);
+	frame.add(topPanel);
+	frame.add(centerPanel);
+	Border Raise = BorderFactory.createRaisedBevelBorder();
+	anotherButton.setBorder(Raise);
+	noMoreButton.setBorder(Raise);
+	resetButton.setBorder(Raise);
+	centerPanel.setLayout(null);
+	centerPanel.add(bankPanel);
+	centerPanel.add(playerPanel);
+	
+	topPanel.add(anotherButton);
+	anotherButton.setActionCommand("key1");
+	anotherButton.addActionListener(this);
+	topPanel.add(noMoreButton);
+	noMoreButton.setActionCommand("key2");
+	noMoreButton.addActionListener(this);
+	topPanel.add(resetButton);
+	resetButton.setActionCommand("key3");
+	resetButton.addActionListener(this);
+	topPanel.setLayout(new FlowLayout());
+	bankPanel.setLayout(new BorderLayout());
+	playerPanel.setLayout(new BorderLayout());
+	topPanel.setBounds(0, 0, 250, 30);
+	bankPanel.setBounds(0, 30, 625, 200);
+	playerPanel.setBounds(0, 230, 625, 210);
+	
+	bankPanel.setBorder(BorderFactory.createTitledBorder("Bank"));
+	playerPanel.setBorder(BorderFactory.createTitledBorder("Player"));
+		
+	}
+	public static void main(String[] args) {
+	
+	try {	
+	updatePlayerPanel();
+	updateBankPanel();
+	}catch (FileNotFoundException ex) {
+		System.out.println(ex.getMessage());}
+	}
+
+	
+	}
